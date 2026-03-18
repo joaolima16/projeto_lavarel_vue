@@ -17,8 +17,16 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price_sale' => 'required|numeric|min:0',
             'price_cost' => 'required|numeric|min:0',
+            'price_sale' => [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($value < ($request->price_cost * 1.10)) {
+                        $fail('O preço de venda deve ser pelo menos 10% maior que o preço de custo.');
+                    }
+                },
+            ],
         ]);
 
         $product = Product::create($validated);
@@ -48,8 +56,17 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'price_sale' => 'sometimes|numeric|min:0',
             'price_cost' => 'sometimes|numeric|min:0',
+            'price_sale' => [
+                'sometimes',
+                'numeric',
+                function ($attribute, $value, $fail) use ($request, $product) {
+                    $custo = $request->input('price_cost', $product->price_cost);
+                    if ($value < ($custo * 1.10)) {
+                        $fail('O preço de venda deve ser pelo menos 10% maior que o preço de custo.');
+                    }
+                },
+            ],
         ]);
 
         $product->update($validated);
