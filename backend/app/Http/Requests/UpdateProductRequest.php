@@ -16,7 +16,15 @@ class UpdateProductRequest extends ApiFormRequest
     {
         return [
             'name' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
+            'description' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if ($value !== strip_tags($value, '<p><br><b><strong>')) {
+                        $fail('A descrição contém tags HTML não permitidas. Use apenas: <p>, <br>, <b>, <strong>.');
+                    }
+                },
+            ],
             'price_cost' => 'sometimes|numeric|min:0',
             'price_sale' => [
                 'sometimes',
@@ -30,9 +38,8 @@ class UpdateProductRequest extends ApiFormRequest
                             $priceCost = $product->price_cost;
                         }
                     }
-
-                    if (is_numeric($priceCost) && $value < ($priceCost * 1.10)) {
-                        $fail('O preço de venda deve ser pelo menos 10% maior que o preço de custo.');
+                    if (is_numeric($priceCost) && $value <= ($priceCost * 1.10)) {
+                        $fail('O preço de venda deve ser maior que o preço de custo + 10%.');
                     }
                 },
             ],

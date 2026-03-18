@@ -1,0 +1,100 @@
+.product-create-container {
+    padding: 2rem;
+    font-family: sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #42b883;
+    outline: none;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-save {
+    background-color: #42b883;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+
+.btn-save:hover {
+    background-color: #3aa876;
+}
+
+.btn-save:disabled {
+    background-color: #a8d5c2;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    background-color: #95a5a6;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-cancel:hover {
+    background-color: #7f8c8d;
+}
+
+.error-msg {
+    background-color: #fee;
+    color: #e74c3c;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border: 1px solid #fcc;
+}
