@@ -14,9 +14,11 @@ class AuthController extends Controller
         $credentials = $request->validated();
 
         if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
             return response()->json([
                 'message' => 'Login realizado com sucesso',
-                'user' => new UserResource($request->user())
+                'user' => new UserResource($user)
             ]);
         }
         return response()->json(['message' => 'Credenciais inválidas'], 401);

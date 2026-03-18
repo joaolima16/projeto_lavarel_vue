@@ -24,7 +24,7 @@ const fetchProduct = async () => {
 
   try {
     product.value = await ProductService.getById(id);
-    currentImageIndex.value = 0; // Reseta o carrossel para a primeira imagem
+    currentImageIndex.value = 0; 
   } catch (e) {
     error.value = 'Erro ao carregar detalhes do produto.';
     console.error(e);
@@ -42,7 +42,6 @@ const getImageUrl = (path: string) => {
   if (path.startsWith('http://') || path.startsWith('https://')) {
     return path;
   }
-  // Tenta usar a variável de ambiente ou fallback para localhost
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   const baseUrl = apiUrl.replace(/\/api\/?$/, '');
   return `${baseUrl}/storage/${path.replace(/^\//, '')}`;
@@ -79,7 +78,6 @@ onMounted(() => {
     <div v-else-if="error" class="error">{{ error }}</div>
     
     <div v-else-if="product" class="product-content">
-      <!-- Carrossel de Imagens -->
       <div class="product-images">
         <div class="main-image-container">
           <template v-if="hasImages">

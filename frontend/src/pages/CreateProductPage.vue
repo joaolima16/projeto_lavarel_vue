@@ -26,7 +26,6 @@ const handleSave = async () => {
   validationError.value = '';
   error.value = '';
 
-  // Validação de Frontend (Regra de Negócio)
   if (Number(priceSale.value) <= Number(priceCost.value) * 1.10) {
     validationError.value = 'O preço de venda deve ser maior que o preço de custo + 10%.';
     return;
@@ -50,7 +49,7 @@ const handleSave = async () => {
     await ProductService.create(formData);
     router.push('/products');
   } catch (e: any) {
-    // Tratamento básico de erro da API
+   
     if (e.response && e.response.data && e.response.data.message) {
         error.value = e.response.data.message;
         if(e.response.data.errors) {

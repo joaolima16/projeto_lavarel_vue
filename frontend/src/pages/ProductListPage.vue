@@ -29,7 +29,6 @@ const handleInactivate = async (id: number) => {
   if (confirm('Tem certeza que deseja inativar/excluir este produto?')) {
     try {
       await ProductService.delete(id);
-      // Remove o item da lista localmente para não precisar recarregar tudo
       products.value = products.value.filter(p => p.id !== id);
     } catch (e) {
       alert('Erro ao excluir o produto.');

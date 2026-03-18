@@ -13,7 +13,6 @@ class ProductController extends Controller
 {
     public function index()
     {
-        // Assumindo que existe a relação 'images' no model Product
         return ProductResource::collection(Product::with('images')->latest()->get());
     }
 
@@ -51,7 +50,6 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        // TODO: Adicionar lógica para deletar as imagens do storage
         $product->delete();
 
         return response()->json(null, 204);
