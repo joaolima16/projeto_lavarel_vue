@@ -2,105 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        return response()->json(Product::all());
+        // Assumindo que existe a relação 'images' no model Product
+        return ProductResource::collection(Product::with('images')->latest()->get());
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price_cost' => 'required|numeric|min:0',
-            'price_sale' => [
-                'required',
-                'numeric',
-                function ($attribute, $value, $fail) use ($request) {
-                    $priceCost = $request->input('price_cost');
-                    if (is_numeric($priceCost) && $value < ($priceCost * 1.10)) {
-                        $fail('O preço de venda deve ser pelo menos 10% maior que o preço de custo.');
-                    }
-                },
-            ],
-            'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpg,png',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $data = $validator->validated();
+        $data = $request->validated();
         $productData = collect($data)->except('images')->toArray();
         
         $product = Product::create($productData);
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('product_images', 'public');
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'path' => $path,
-                ]);
-            }
-        }
-        return response()->json($product, 201);
+        $this->handleImages($request, $product);
+
+        return response()->json(new ProductResource($product->load('images')), 201);
     }
 
-    public function show(string $id)
+    public function show(Product $product)
     {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
-        }
-
-        return response()->json($product);
+        return new ProductResource($product->load('images'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'price_cost' => 'sometimes|numeric|min:0',
-            'price_sale' => [
-                'sometimes',
-                'numeric',
-                function ($attribute, $value, $fail) use ($request, $product) {
-                    $cost = $request->input('price_cost') ?? $product->price_cost;
-                    if (is_numeric($cost) && $value < ($cost * 1.10)) {
-                        $fail('O preço de venda deve ser pelo menos 10% maior que o preço de custo.');
-                    }
-                },
-            ],
-            'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpg,png',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $data = $validator->validated();
+        $data = $request->validated();
         $productData = collect($data)->except('images')->toArray();
 
         $product->update($productData);
 
+        $this->handleImages($request, $product);
+
+        return response()->json([
+            'message' => 'Product updated', 
+            'product' => new ProductResource($product->load('images'))
+        ]);
+    }
+
+    public function destroy(Product $product)
+    {
+        // TODO: Adicionar lógica para deletar as imagens do storage
+        $product->delete();
+
+        return response()->json(null, 204);
+    }
+
+
+    private function handleImages(Request $request, Product $product): void
+    {
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('product_images', 'public');
@@ -110,20 +69,5 @@ class ProductController extends Controller
                 ]);
             }
         }
-
-        return response()->json(['message' => 'Product updated', 'product' => $product]);
-    }
-
-    public function destroy(string $id)
-    {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
-        }
-
-        $product->delete();
-
-        return response()->json(['message' => 'Product deleted'], 204);
     }
 }
