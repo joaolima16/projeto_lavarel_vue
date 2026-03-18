@@ -108,3 +108,4 @@ docker-compose exec backend php artisan storage:link
 ### 4. Acesso
 - **Frontend**: Acesse `http://localhost:5173` (ou a porta configurada no seu docker-compose).
 - **Backend/API**: Acessível em `http://localhost:8000`.
+- **Usuário  padrão**: email: admin@admin.com, senha: password.
