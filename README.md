@@ -16,7 +16,7 @@ O projeto foi construído respeitando as versões e tecnologias solicitadas, uti
 ### Backend
 - **Linguagem**: [PHP](https://www.php.net/)
 - **Framework**: [Laravel](https://laravel.com/)
-- **Banco de Dados**: [PostgreSql]([(https://www.postgresql.org/)])
+- **Banco de Dados**: [PostgreSql](https://www.postgresql.org/)
 - **Autenticação**: Laravel Sanctum (API Tokens)
 
 ### Infraestrutura
